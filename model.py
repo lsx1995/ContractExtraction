@@ -41,9 +41,7 @@ class ContractInfo():
                 sub_text=self.CONTRACT_TEXT[0:index+find_length+len(i)]
             else:
                 sub_text = self.CONTRACT_TEXT[index - find_length:index + find_length + len(i)]
-            # print(sub_text)
             for k in limit_phrases:
-                # print(k)
                 for j in k:
                     if j not in sub_text:
                         flag=1
@@ -66,16 +64,56 @@ class ContractInfo():
         else:
             return "none"
 
+
+    def getSALARY_TYPE(self):
+        '''
+        获取工资类型
+        :param strr:
+        :return:
+        '''
+        pattern = re.compile(r"按下列第(\d{1})种工资形式执行")
+        result = pattern.findall(self.CONTRACT_TEXT)
+        if result:
+            return self.ChooseBestInfo(result, ['第','种'], 5)
+        else:
+            return "none"
+
     def getSALARY_BYTIME(self):
         '''
         获取计时工资
         :param strr:
         :return:
         '''
-        pattern = re.compile(r"(\d{3,6}元)")
+        pattern = re.compile(r"试用期满月正常工作时间工资定为(\d{4})元")
         result = pattern.findall(self.CONTRACT_TEXT)
         if result:
-            return self.ChooseBestInfo(result, [['工资','。']],6 )
+            return self.ChooseBestInfo(result, [['工资定为','元']],6 )
+        else:
+            return "none"
+
+    def getSALARY_PERIOD(self):
+        """
+        获取计时工资周期
+        :return:
+        """
+        pattern = re.compile(r"定(\D{1,2})")
+        result = pattern.findall(self.CONTRACT_TEXT)
+        if result:
+            self.SALARY_PERIOD = self.ChooseBestInfo(result, ['日'], 5)
+            return self.SALARY_PERIOD
+        else:
+            return "none"
+
+    def getSALARY_BYNUM(self):
+        '''
+        获取发工资日期
+        :param strr:
+        :return:
+        '''
+        pattern = re.compile(r"每月(\d{1,2})日")
+        result = pattern.findall(self.CONTRACT_TEXT)
+        if result:
+            return self.ChooseBestInfo(result, ['工资'], 30)
         else:
             return "none"
 
@@ -85,38 +123,16 @@ class ContractInfo():
         :param strr:
         :return:
         '''
-        pattern = re.compile(r"(每月\d{1,2}日)")
+        pattern = re.compile(r"每月(\d{1,2})日")
         result = pattern.findall(self.CONTRACT_TEXT)
         if result:
-            return self.ChooseBestInfo(result, ['工资'], 30)
+            return self.ChooseBestInfo(result, ['每月','日为发薪日'], 5)
         else:
             return "none"
 
-    def getSALARY_TYPE(self):
-        '''
-        获取工资类型
-        :param strr:
-        :return:
-        '''
-        pattern = re.compile(r"(第\d{1}种)")
-        result = pattern.findall(self.CONTRACT_TEXT)
-        if result:
-            return self.ChooseBestInfo(result, ['工资'], 5)
-        else:
-            return "none"
 
-    def getSALARY_PERIOD(self):
-        """
-        获取计时工资周期
-        :return:
-        """
-        pattern = re.compile(r"甲方于(\D{2})")
-        result = pattern.findall(self.CONTRACT_TEXT)
-        if result:
-            self.SALARY_PERIOD = self.ChooseBestInfo(result, ['日'], 5)
-            return self.SALARY_PERIOD
-        else:
-            return "none"
+
+
 
 
 
@@ -127,7 +143,7 @@ class ContractInfo():
         :return:
         '''
 
-        pattern = re.compile(r"从(\d{4}年\d{1,2}月\d{1,2}日)")
+        pattern = re.compile(r"(\d{4}年\d{1,2}月\d{1,2}日)")
         result = pattern.findall(self.CONTRACT_TEXT)
         if result:
             self.PROBATION_START=self.ChooseBestInfo(result, [['试用期从']], 5)
@@ -273,7 +289,6 @@ class ContractInfo():
         pattern = re.compile(r"工作内容为([\u4E00-\u9FA5A-Za-z0-9_]+)，|工作岗位是(\D{3,6})，")
         result = pattern.findall(self.CONTRACT_TEXT)
         result=[p for p in result[0] if p!=""]
-        print(result)
         if result:
             self.WORK_CONT = self.ChooseBestInfo(result, [['工作内容为','，'],['工作岗位','，']], 8)
             return self.WORK_CONT
@@ -300,12 +315,11 @@ class ContractInfo():
         :param self:
         :return:
         """
-        pattern = re.compile(r"每日工作时间(\d{1}\D{2})")
+        pattern = re.compile(r"每日工作时间(\d{1})")
         result = pattern.findall(self.CONTRACT_TEXT)
-        print(result)
         if result:
             self.WORK_HOUR_DAY = self.ChooseBestInfo(result, [['时间','，']], 5)
-            return self.WORK_HOUR_DAY
+            return self.WORK_HOUR_DAY + '小时'
         else:
             return "none"
 
@@ -372,6 +386,11 @@ class ContractInfo():
             return self.CONTRACT_END_DATE
         else:
             return "none"
+
+
+
+
+
 
 
 
