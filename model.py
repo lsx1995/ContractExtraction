@@ -286,7 +286,7 @@ class ContractInfo():
         :param strr:
         :return:
         """
-        pattern = re.compile(r"工作内容为(\D{3,6})，|工作岗位是(\D{3,6})，")
+        pattern = re.compile(r"工作内容为([\u4E00-\u9FA5A-Za-z0-9_]+)，|工作岗位是(\D{3,6})，")
         result = pattern.findall(self.CONTRACT_TEXT)
         result=[p for p in result[0] if p!=""]
         if result:
@@ -301,7 +301,7 @@ class ContractInfo():
         :param strr:
         :return:
         """
-        pattern = re.compile(r"工作地点为(\D{3,10})。")
+        pattern = re.compile(r"工作地点为([\u4E00-\u9FA5A-Za-z0-9_]+)。")
         result = pattern.findall(self.CONTRACT_TEXT)
         if result:
             self.WORK_ADDR = self.ChooseBestInfo(result, [['工作地点','。']], 6)
@@ -379,7 +379,7 @@ class ContractInfo():
         :param strr:
         :return:
         """
-        pattern = re.compile(r"岗位（工种）为(\D+)，")
+        pattern = re.compile(r"[\u4E00-\u9FA5A-Za-z0-9_]+")
         result = pattern.findall(self.CONTRACT_TEXT)
         if result :
             self.CONTRACT_END_DATE = self.ChooseBestInfo(result, ['岗位.', ','], 8)
