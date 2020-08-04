@@ -1,6 +1,6 @@
 # ContractExtraction
-github项目协作更新\n
-1 首先将项目从github下克隆下来\n
+github项目协作更新/n
+1 首先将项目从github下克隆下来/n
 git clone "https://github.com/lsx1995/ContractExtraction.git"\n
 2 将他变成git管理的仓库\n
 git init\n
